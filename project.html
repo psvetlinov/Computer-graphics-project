@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script src="human.js"></script>
+	</head>
+	
+	<body>
+		<audio id="music" autoplay loop>
+				<source src="rachenica.mp3" type="audio/mpeg">
+		</audio>
+		<script>
+		
+			//използване части от кода от 2ро домашно (mannequin)
+		
+			// рисувателно поле на цял екран
+			renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			renderer.domElement.style = 'width:100%; height:100%; position:fixed; top:0; left:0; z-index:-1;';
+			
+			// сцена и камера
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 0.1, 2000 );
+			camera.position.set(0,3,150);
+
+			// светлини
+			var light = new THREE.DirectionalLight('white',0.8);
+			light.position.set(0,1,4);
+			scene.add(light);
+			scene.add( new THREE.AmbientLight('white',0.4) );
+			
+			// функция за анимиране на сцената
+			var t = 0; // време
+			function drawFrame()
+			{
+				requestAnimationFrame( drawFrame );
+				if (animate) animate(t++);
+				renderer.render( scene, camera );
+			}			
+			
+			//работа по обстановката-под, стени
+			// създаване на под:
+			var texture = new THREE.TextureLoader().load( "shevica.jpg" );
+			var floor = new THREE.Mesh(
+				new THREE.BoxGeometry(200,2,300),
+				new THREE.MeshPhongMaterial({map: texture})
+			);
+			floor.position.y = -40;
+			floor.position.z=-155;
+			scene.add( floor );
+			
+			//създаване на задна стена:
+			var geometry = new THREE.BoxGeometry( 195,230,2 );
+			var material = new THREE.MeshPhongMaterial({color:'rgb(205,133,63)'});
+			var backWall = new THREE.Mesh( geometry, material );
+			backWall.position.z=-280;
+			backWall.position.y=5;
+			scene.add(backWall);
+			
+			//странични стени:
+			//дясна стена:
+			var geometry = new THREE.BoxGeometry( 2,235,160 );
+			var material = new THREE.MeshPhongMaterial({color:'rgb(205,133,63)'});
+			var wall1 = new THREE.Mesh( geometry, material );
+			wall1.position.z=-225;
+			wall1.position.y=5;
+			wall1.position.x=140;
+			wall1.rotation.y=Math.PI/6 ;
+			scene.add(wall1);
+		
+			//лява стена:
+			var geometry = new THREE.BoxGeometry( 2,235,160 );
+			var material = new THREE.MeshPhongMaterial({color:'rgb(205,133,63)'});
+			var wall2 = new THREE.Mesh( geometry, material );
+			wall2.position.z=-225;
+			wall2.position.y=5;
+			wall2.position.x=-140;
+			wall2.rotation.y=-Math.PI/6 ;
+			scene.add(wall2);
+			
+			//атрибути на задната стена: знаме и шевица
+			//българско знаме:
+			var geometry = new THREE.BoxGeometry( 160,10,0);
+			var material = new THREE.MeshBasicMaterial({color:'rgb(255,255,255)'});
+			var flagColor1 = new THREE.Mesh( geometry, material );
+			flagColor1.position.set(0,75,-200)
+			scene.add(flagColor1);			
+			
+			var geometry = new THREE.BoxGeometry( 160,10,0);
+			var material = new THREE.MeshBasicMaterial({color:'rgb(0,255,0)'});
+			var flagColor2 = new THREE.Mesh( geometry, material );
+			flagColor2.position.set(0,65,-200)
+			scene.add(flagColor2);
+
+			var geometry = new THREE.BoxGeometry( 160,10,0);
+			var material = new THREE.MeshBasicMaterial({color:'rgb(255,0,0)'});
+			var flagColor3 = new THREE.Mesh( geometry, material );
+			flagColor3.position.set(0,55,-200)
+			scene.add(flagColor3);	
+
+			//шевица отляво:
+			var texture2 = new THREE.TextureLoader().load( "shevica2.jpg" );
+			var geometry = new THREE.BoxGeometry( 190,50,0);
+			var material = new THREE.MeshPhongMaterial({map: texture2});
+			var leftShevica = new THREE.Mesh( geometry, material );
+			leftShevica.position.set(-140,5,-225);
+			leftShevica.rotation.y=-Math.PI/2 ;
+			scene.add( leftShevica );			
+			
+			//шевица отдясно:
+			var geometry = new THREE.BoxGeometry( 190,50,0);
+			var material = new THREE.MeshPhongMaterial({map: texture2});
+			var rightShevica = new THREE.Mesh( geometry, material );
+			rightShevica.position.set(140,5,-225);
+			rightShevica.rotation.y=Math.PI/2 ;
+			scene.add( rightShevica );			
+			
+			//лого Надиграй ме на задната стена:
+			var texture3 = new THREE.TextureLoader().load( "nadigraiMe.jpg" );
+			var geometry = new THREE.BoxGeometry( 60,60,0);
+			var material = new THREE.MeshBasicMaterial({map: texture3});
+			var backLogo = new THREE.Mesh( geometry, material );
+			backLogo.position.set(35,5,-200);
+			scene.add( backLogo );			
+			
+			//шевица на задната стена:
+			var texture4 = new THREE.TextureLoader().load( "shevicaPattern.jpg" );
+			var geometry = new THREE.BoxGeometry( 60,60,0);
+			var material = new THREE.MeshBasicMaterial({map: texture4});
+			var backPattern = new THREE.Mesh( geometry, material );
+			backPattern.position.set(-40,5,-200);
+			scene.add( backPattern );
+			
+			//създаване на тъпан:
+			var texture5 = new THREE.TextureLoader().load( "drumLining.jpg" );
+			var geometry = new THREE.CylinderGeometry( 5, 5, 10, 32 );
+			var material = new THREE.MeshPhongMaterial({map: texture5});
+			var drum = new THREE.Mesh( geometry, material );
+			drum.rotation.x=Math.PI/2;
+			drum.rotation.z=Math.PI/4;
+			drum.position.set(-10,-10,-10);
+			scene.add( drum );
+			
+			var texture6 = new THREE.TextureLoader().load( "drumOut.jpg" );
+			var geometry = new THREE.CylinderGeometry( 5.2, 5.2, 1, 16 );
+			var material = new THREE.MeshPhongMaterial({map: texture6});
+			var drumEnd = new THREE.Mesh( geometry, material );
+			drumEnd.rotation.x=Math.PI/2;
+			drumEnd.rotation.z=Math.PI/4;
+			drumEnd.position.set(-12,-9,4.5);
+			scene.add( drumEnd );
+			
+			var geometry = new THREE.CylinderGeometry( 5.2, 5.2, 1, 16 );
+			var material = new THREE.MeshPhongMaterial({map: texture6});
+			var drumEnd2 = new THREE.Mesh( geometry, material );
+			drumEnd2.rotation.x=Math.PI/2;
+			drumEnd2.rotation.z=Math.PI/4;
+			drumEnd2.position.set(-7,-10,-13);
+			scene.add( drumEnd2 );
+			
+			//създаване на дамаджана:
+			var texture7 = new THREE.TextureLoader().load( "pletenica.jpg" );
+			var geometry = new THREE.CylinderGeometry( 6, 2, 6, 32 );
+			var material = new THREE.MeshPhongMaterial({map:texture7});
+			var damad = new THREE.Mesh( geometry, material );
+			damad.position.set(45,-20,35);
+			scene.add( damad );
+			
+			var geometry = new THREE.SphereGeometry( 6, 32, 32, 0, 2*Math.PI, Math.PI/2, Math.PI/2 );
+			var material = new THREE.MeshPhongMaterial( {map:texture7} );
+			var middleDamad = new THREE.Mesh( geometry, material );
+			middleDamad.rotation.y=Math.PI/3;
+			middleDamad.rotation.x=Math.PI;
+			middleDamad.position.set(45,-17,35);
+			scene.add( middleDamad );
+			
+			var geometry = new THREE.CylinderGeometry( 1, 4, 7, 32 );
+			var material = new THREE.MeshPhongMaterial({map:texture7});
+			var damadUp = new THREE.Mesh( geometry, material );
+			damadUp.position.set(45,-12,35);
+			scene.add( damadUp );
+			//капачка на дамаджаната
+			var geometry = new THREE.CylinderGeometry( 1.5, 1.5, 1, 32 );
+			var material = new THREE.MeshPhongMaterial({color:'rgb(255,255,255)'});
+			var tap = new THREE.Mesh( geometry, material );
+			tap.position.set(45,-8,35);
+			scene.add( tap );
+			
+			//дръжка на дамаджаната:
+			var geometry = new THREE.TorusGeometry( 5, 0.5, 16, 100, Math.PI/2);
+			var material = new THREE.MeshBasicMaterial( {map:texture7} );
+			var handle = new THREE.Mesh( geometry, material );
+			handle.position.set(45.5,-14.5,35);
+			scene.add( handle );
+			
+				
+			//навои за краката на мъжете:
+			var texture8 = new THREE.TextureLoader().load( "navoi.jpg" );
+			var geometry = new THREE.CylinderGeometry( 1.5, 1.5, 11, 32,1,true );
+			var material = new THREE.MeshBasicMaterial( {map:texture8} );
+			var leg1 = new THREE.Mesh( geometry, material );
+			scene.add( leg1 );
+			
+			var geometry = new THREE.CylinderGeometry( 1.5, 1.5, 11, 32,1,true );
+			var material = new THREE.MeshBasicMaterial( {map:texture8} );
+			var leg2 = new THREE.Mesh( geometry, material );
+			scene.add( leg2 );
+			
+			var geometry = new THREE.CylinderGeometry( 1.5, 1.5, 11, 32,1,true );
+			var material = new THREE.MeshBasicMaterial( {map:texture8} );
+			var leg3 = new THREE.Mesh( geometry, material );
+			scene.add( leg3 );
+			
+			var geometry = new THREE.CylinderGeometry( 1.5, 1.5, 11, 32,1,true );
+			var material = new THREE.MeshBasicMaterial( {map:texture8} );
+			var leg4 = new THREE.Mesh( geometry, material );
+			scene.add( leg4 );
+			
+			//създаване на калпак:
+			var texture9 = new THREE.TextureLoader().load( "kalpak.jpg" );
+			var pred1 = new THREE.Object3D();
+			scene.add(pred1);
+			var geometry = new THREE.CylinderGeometry( 3, 4, 4, 32 );
+			var material = new THREE.MeshPhongMaterial({map:texture9});
+			var hat = new THREE.Mesh( geometry, material );
+			hat.position.set(0,0,0);
+			pred1.add( hat );
+			
+			geometry = new THREE.SphereGeometry( 3, 32, 32, 0, 2*Math.PI, Math.PI/2, Math.PI/2 );
+			material = new THREE.MeshPhongMaterial( {map:texture9} );
+			var hatTop = new THREE.Mesh( geometry, material );
+			hatTop.rotation.y=Math.PI/3;
+			hatTop.rotation.x=Math.PI;
+			hatTop.position.set(0,2,0);
+			pred1.add( hatTop );
+			
+			//2ри калпак
+			var pred2 = new THREE.Object3D();
+			scene.add(pred2);
+			var geometry = new THREE.CylinderGeometry( 3, 4, 4, 32 );
+			var material = new THREE.MeshPhongMaterial({map:texture9});
+			var hat = new THREE.Mesh( geometry, material );
+			hat.position.set(0,0,0);
+			pred2.add( hat );
+			
+			geometry = new THREE.SphereGeometry( 3, 32, 32, 0, 2*Math.PI, Math.PI/2, Math.PI/2 );
+			material = new THREE.MeshPhongMaterial( {map:texture9} );
+			var hatTop = new THREE.Mesh( geometry, material );
+			hatTop.rotation.y=Math.PI/3;
+			hatTop.rotation.x=Math.PI;
+			hatTop.position.set(0,2,0);
+			pred2.add( hatTop );
+					
+			
+			// човече- от второто домашно; извършване на промени
+			//мъж отляво - позициониране
+			манекен = мъжествен();
+			манекен.position.set(15, 0, -50)
+			манекен.rotation.y=-2*Math.PI/4;
+			манекен.тяло.врът(0, 0, -15);
+			манекен.д_ръка.врът(-25,0,0);
+			манекен.д_лакът.врът(100,-10,-30);
+			манекен.л_ръка.врът(25,0,0);
+			манекен.л_лакът.врът(-100,15,-45);
+			
+			//добавяне на навои
+			манекен.д_коляно.children[0].add(leg3);
+			leg3.position.set(0,7,0);
+			манекен.л_коляно.children[0].add(leg4);
+			leg4.position.set(0,7,0);
+			//добавяне на калпак
+			манекен.глава.children[0].add(pred1);
+			pred1.position.set(0,6,0);
+			
+			//жена от ляво:
+			манекен1 = женствен();
+			манекен1.position.set(35,0,-70);
+			манекен1.rotation.y=-2*Math.PI/4;
+			манекен1.д_ръка.врът(-30,0,0);
+			манекен1.д_лакът.врът(100,-45,-38);
+			манекен1.л_ръка.врът(35,0,0);
+			манекен1.л_лакът.врът(-100,0,-35);
+					
+			//мъж отдясно: позициониране+добавки
+			манекен2 = мъжествен();
+			манекен2.position.set(25, 0, -80)
+			манекен2.rotation.y=-2*Math.PI/4;
+			манекен2.д_ръка.врът(-35,0,0);
+			манекен2.д_лакът.врът(100,-5,-30);
+			
+			//добавяне на навои:
+			манекен2.д_коляно.children[0].add(leg1);
+			leg1.position.set(0,7,0);
+			манекен2.л_коляно.children[0].add(leg2);
+			leg2.position.set(0,7,0);
+			//добавяне на калпак:
+			манекен2.глава.children[0].add(pred2);
+			pred2.position.set(0,6,0);
+			
+			//жена отдясно
+			манекен3 = женствен();
+			манекен3.position.set(45,0,-80);
+			манекен3.rotation.y=-2*Math.PI/4;
+			манекен3.л_ръка.врът(30,0,0);
+			манекен3.л_лакът.врът(-100,5,-30);
+			
+			// анимация на манекените - отново от второто домашно
+			animate = function (t)
+			{				
+				//мъж отляво: позициониране и промени в движенията
+				манекен.position.set(-55,sin(7*t)-15,-50);
+				манекен.д_крак.врът(0,0,25*sin(9*t)-90);
+				манекен.д_коляно.врът(0,0,80);
+				манекен.л_крак.врът(0,0,20*sin(8*t+1)-90);
+				манекен.л_коляно.врът(0,0,80);
+				манекен.врат.врът(0, 40 - 40*sin(1.5*t),0);
+				
+				//жена отляво-позициониране и промени в движенията
+				манекен1.position.set(-37,sin(7*t)-15,-50);
+				манекен1.д_крак.врът(0,0,25*sin(9*t)-90);
+				манекен1.д_коляно.врът(0,0,80);
+				манекен1.л_крак.врът(0,0,20*sin(8*t+1)-90);
+				манекен1.л_коляно.врът(0,0,80);
+				манекен1.врат.врът(0, -40 + 40*sin(t),0);
+				
+				//мъж отдясно - позициониране и промени в движенията
+				манекен2.position.set(25,sin(6*t)-5,-80);
+				манекен2.д_крак.врът(0,0,-25);
+				манекен2.д_коляно.врът(0,0,55*sin(3*t+1)+80);
+				манекен2.л_крак.врът(0,0,-25);
+				манекен2.л_коляно.врът(0,0,55*sin(6*t)+80);
+				манекен2.л_китка.врът(0,0,30);
+				манекен2.л_ръка.врът(0,0,10*sin(6*t)-30);
+				манекен2.л_лакът.врът(5,0,5*sin(4*t)-30);
+				манекен2.врат.врът(0, -20 + 10*sin(t),0);
+				
+				
+				//жена отдясно - позициониране и промени в движенията
+				манекен3.position.set(45,sin(6*t)-5,-80);
+				манекен3.д_крак.врът(0,0,-25);
+				манекен3.л_коляно.врът(0,0,55*sin(3*t+1)+80);
+				манекен3.л_крак.врът(0,0,-25);
+				манекен3.д_коляно.врът(0,0,55*sin(6*t)+80);
+				манекен3.д_китка.врът(-10,0,20);
+				манекен3.д_ръка.врът(0,0,10*sin(6*t)-30);
+				манекен3.д_лакът.врът(-5,0,5*sin(4*t)-30);
+				манекен3.врат.врът(0, -20 + 10*sin(0.5*t),0);
+				
+			}
+
+			drawFrame();
+		</script>
+	</body>
+</html>
